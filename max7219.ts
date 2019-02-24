@@ -22,7 +22,7 @@ namespace MAX7219_Matrix {
     /**
     * Setup/reset MAX7219s
     */
-    //% block="Setup MAX7219:|Number of matrixs $num|CS(LOAD) = $cs|MOSI(DIN) = $mosi|MISO(not used) = $miso|SCK(CLK) = $sck"
+    //% block="Setup MAX7219:|Number of matrixs $num|CS(LOAD) = $cs|MOSI(DIN) = $mosi|MISO(not used) = $miso|SCK(CLK) = $sck|Rotate Display = $rotate"
     //% num.min=1 num.defl=1
     //% cs.defl=DigitalPin.P16
     //% mosi.defl=DigitalPin.P15
