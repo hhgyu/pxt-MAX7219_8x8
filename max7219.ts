@@ -197,12 +197,12 @@ namespace MAX7219_Matrix {
         }
 	
         let displayArray: number[] = []
-        for (let i = 0; i < (_matrixNum + 2) * 8; i++) {
+        for (let i = 0; i < _displayArray.length; i++) {
             displayArray.push(0)
         }
 
 	if(_rotate == 1) {
-            for (let i = 0; i < _displayArray.length; i++) {
+            for (let i = 0; i < _matrixNum + 2; i++) {
 	        for (let j = 0; j < 8; j++) {
 	            displayArray[(i * 8) + j] |= (_displayArray[(i * 8) + 7] & (0x1 << (7 - j))) == (0x1 << (7 - j)) ? (0x1 << 7) : 0
 	            displayArray[(i * 8) + j] |= (_displayArray[(i * 8) + 6] & (0x1 << (7 - j))) == (0x1 << (7 - j)) ? (0x1 << 6) : 0
