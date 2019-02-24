@@ -217,7 +217,7 @@ namespace MAX7219_Matrix {
 	}
 	else {
             for (let i = 0; i < _displayArray.length; i++) {
-	        displayArray[i] = _displayArray[I]
+	        displayArray[i] = _displayArray[i]
 	    }
 	}
 
