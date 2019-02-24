@@ -28,6 +28,7 @@ namespace MAX7219_Matrix {
     //% mosi.defl=DigitalPin.P15
     //% miso.defl=DigitalPin.P14
     //% sck.defl=DigitalPin.P13
+    //% rotate.min=0 rotate.max=3 rotate.defl=0
     //% group="1. Setup"
     export function setup(num: number, cs: DigitalPin, mosi: DigitalPin, miso: DigitalPin, sck: DigitalPin, rotate: number) {
         // set internal variables        
