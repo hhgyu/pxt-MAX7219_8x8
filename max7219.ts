@@ -17,6 +17,7 @@ namespace MAX7219_Matrix {
     let _pinCS = DigitalPin.P16 // LOAD pin, 0=ready to receive command, 1=command take effect
     let _matrixNum = 1 // number of MAX7219 matrix linked in the chain
     let _displayArray: number[] = [] // display array to show accross all matrixs
+    let _rotate: number = 0 // angel 0 : 0, 1:90, 2:180, 3: 270
 
     /**
     * Setup/reset MAX7219s
@@ -28,10 +29,11 @@ namespace MAX7219_Matrix {
     //% miso.defl=DigitalPin.P14
     //% sck.defl=DigitalPin.P13
     //% group="1. Setup"
-    export function setup(num: number, cs: DigitalPin, mosi: DigitalPin, miso: DigitalPin, sck: DigitalPin) {
+    export function setup(num: number, cs: DigitalPin, mosi: DigitalPin, miso: DigitalPin, sck: DigitalPin, rotate: number) {
         // set internal variables        
         _pinCS = cs
         _matrixNum = num
+	_rotate = rotate % 4
         // prepare display array (for displaying texts; add extra 8 columns at each side as buffers)
         for (let i = 0; i < (num + 2) * 8; i++) {
             _displayArray.push(0)
@@ -44,7 +46,7 @@ namespace MAX7219_Matrix {
         _registerAll(_SHUTDOWN, 0) // turn off
         _registerAll(_DISPLAYTEST, 0) // test mode off
         _registerAll(_DECODEMODE, 0) // decode mode off
-        _registerAll(_SCANLIMIT, 7) // set scan limit to 7 (column 0-7)
+        _registerAll(_SCANLIMIT, (7 - j)) // set scan limit to 7 (column 0-(7 - j))
         _registerAll(_INTENSITY, 15) // set brightness to 15
         _registerAll(_SHUTDOWN, 1) // turn on
         clearAll() // clear screen on all MAX7219s
@@ -192,12 +194,39 @@ namespace MAX7219_Matrix {
             currentChrIndex += 1
             if (currentChrIndex == characters_index.length) break
         }
+	
+        let displayArray: number[] = []
+        for (let i = 0; i < (_matrixNum + 2) * 8; i++) {
+            displayArray.push(0)
+        }
+
+	if(_rotate == 1) {
+            for (let i = 0; i < _displayArray.length; i++) {
+	        for (let j = 0; j < 8; j++) {
+	            displayArray[(i * 8) + j] |= (_displayArray[(i * 8) + 7] & (0x1 << (7 - j))) == (0x1 << (7 - j)) ? (0x1 << 7) : 0
+	            displayArray[(i * 8) + j] |= (_displayArray[(i * 8) + 6] & (0x1 << (7 - j))) == (0x1 << (7 - j)) ? (0x1 << 6) : 0
+	            displayArray[(i * 8) + j] |= (_displayArray[(i * 8) + 5] & (0x1 << (7 - j))) == (0x1 << (7 - j)) ? (0x1 << 5) : 0
+	            displayArray[(i * 8) + j] |= (_displayArray[(i * 8) + 4] & (0x1 << (7 - j))) == (0x1 << (7 - j)) ? (0x1 << 4) : 0
+	            displayArray[(i * 8) + j] |= (_displayArray[(i * 8) + 3] & (0x1 << (7 - j))) == (0x1 << (7 - j)) ? (0x1 << 3) : 0
+	            displayArray[(i * 8) + j] |= (_displayArray[(i * 8) + 2] & (0x1 << (7 - j))) == (0x1 << (7 - j)) ? (0x1 << 2) : 0
+	            displayArray[(i * 8) + j] |= (_displayArray[(i * 8) + 1] & (0x1 << (7 - j))) == (0x1 << (7 - j)) ? (0x1 << 1) : 0
+	            displayArray[(i * 8) + j] |= (_displayArray[(i * 8) + 0] & (0x1 << (7 - j))) == (0x1 << (7 - j)) ? (0x1 << 0) : 0
+	        }
+	    }
+	}
+	else {
+            for (let i = 0; i < _displayArray.length; i++) {
+	        displayArray[i] = _displayArray[I]
+	    }
+	}
+
+
         // write every 8 columns of display array (visible area) to each MAX7219s
         let matrixCountdown = _matrixNum - 1
         for (let i = 8; i < _displayArray.length - 8; i += 8) {
             if (matrixCountdown < 0) break
             for (let j = i; j < i + 8; j++) {
-                _registerForOne(_DIGIT[j - i], _displayArray[j], matrixCountdown)
+                _registerForOne(_DIGIT[j - i], displayArray[j], matrixCountdown)
             }
             matrixCountdown -= 1
         }
