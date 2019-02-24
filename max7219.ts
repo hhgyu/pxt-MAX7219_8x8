@@ -403,6 +403,58 @@ namespace MAX7219_Matrix {
     }
 
     /**
+    * Rotate byte number font library.
+    */
+    //% block="Rotate $rotate|number array $customCharArray"
+    //% rotate.min=0 rotate.max=3 rotate.defl=0
+    //% blockExternalInputs=true
+    //% group="2. Display text on matrixs"
+    //% advanced=true
+    export function rotateCustomNumberArray(rotate: number, customCharArray: number[]) {
+        if (customCharArray != null) {
+            let displayArray: number[] = []
+            for (let i = 0; i < customCharArray.length; i++) {
+                displayArray.push(customCharArray[i])
+            }
+
+	    if(_rotate >= 1) {
+	        let rotate = _rotate;
+	        do {
+		    let tmpDisplayArray: number[] = []
+	            for (let i = 0; i < customCharArray.length; i++) {
+		        tmpDisplayArray.push(0)
+	            }
+
+	            for (let i = 0; i < _matrixNum + 2; i++) {
+		        for (let j = 0; j < 8; j++) {
+		            tmpDisplayArray[(i * 8) + j] |= (displayArray[(i * 8) + 7] & (0x1 << (7 - j))) == (0x1 << (7 - j)) ? (0x1 << 7) : 0
+	    	            tmpDisplayArray[(i * 8) + j] |= (displayArray[(i * 8) + 6] & (0x1 << (7 - j))) == (0x1 << (7 - j)) ? (0x1 << 6) : 0
+		            tmpDisplayArray[(i * 8) + j] |= (displayArray[(i * 8) + 5] & (0x1 << (7 - j))) == (0x1 << (7 - j)) ? (0x1 << 5) : 0
+		            tmpDisplayArray[(i * 8) + j] |= (displayArray[(i * 8) + 4] & (0x1 << (7 - j))) == (0x1 << (7 - j)) ? (0x1 << 4) : 0
+		            tmpDisplayArray[(i * 8) + j] |= (displayArray[(i * 8) + 3] & (0x1 << (7 - j))) == (0x1 << (7 - j)) ? (0x1 << 3) : 0
+		            tmpDisplayArray[(i * 8) + j] |= (displayArray[(i * 8) + 2] & (0x1 << (7 - j))) == (0x1 << (7 - j)) ? (0x1 << 2) : 0
+		            tmpDisplayArray[(i * 8) + j] |= (displayArray[(i * 8) + 1] & (0x1 << (7 - j))) == (0x1 << (7 - j)) ? (0x1 << 1) : 0
+		            tmpDisplayArray[(i * 8) + j] |= (displayArray[(i * 8) + 0] & (0x1 << (7 - j))) == (0x1 << (7 - j)) ? (0x1 << 0) : 0
+		        }
+	            }
+	    
+                    for (let i = 0; i < customCharArray.length; i++) {
+	                displayArray[i] = tmpDisplayArray[i]
+	            }
+		    rotate--;
+	        } while(rotate > 0);
+	    } else {
+                for (let i = 0; i < customCharArray.length; i++) {
+	            displayArray[i] = customCharArray[i]
+	        }
+	    }
+
+	    return displayArray
+        }
+        return null
+    }
+
+    /**
     * Add a custom character from a number array at the end of the extension's font library.
     * Each number in the array is 0-255, the decimal version of column's byte number.
     */
